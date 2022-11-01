@@ -5,9 +5,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs').promises;
 const telegram = require('./telegram.js');
 
-const DEFAULT_DESKTOP_VIEWPOINT_RATIO = [
-  { width: 1140, height: 640 }
-];
+const DEFAULT_DESKTOP_VIEWPOINT_RATIO = [{ width: 1140, height: 640 }];
 
 const DEFAULT_TYPE = 'jpeg';
 const deviceNames = Object.keys(puppeteer.devices);
@@ -111,19 +109,19 @@ async function run() {
       console.log('Processing desktop screenshot');
       await desktopPage.goto(url, { waitUntil });
       if (popupClass) {
-        let div_selector_to_remove= popupClass;
-        await page.evaluate((sel) => {
-            var elements = document.querySelectorAll(sel);
-            for(var i=0; i< elements.length; i++){
-                elements[i].parentNode.removeChild(elements[i]);
+        let div_selector_to_remove = popupClass;
+        await desktopPage.evaluate((sel) => {
+          let elements = document.querySelectorAll(sel);
+          for (var i = 0; i < elements.length; i++) {
+            elements[i].parentNode.removeChild(elements[i]);
+          }
+          document.querySelectorAll('iframe').forEach((item) => {
+            let elements = item.contentWindow.document.querySelectorAll(sel);
+            for (var i = 0; i < elements.length; i++) {
+              elements[i].parentNode.removeChild(elements[i]);
             }
-            document.querySelectorAll('iframe').forEach( item =>
-              var elements = item.contentWindow.document.querySelectorAll(sel);
-              for(var i=0; i< elements.length; i++){
-                  elements[i].parentNode.removeChild(elements[i]);
-              }
-            )
-        }, div_selector_to_remove)
+          });
+        }, div_selector_to_remove);
       }
       for (const { width, height } of DEFAULT_DESKTOP_VIEWPOINT_RATIO) {
         // filename with/without post fix commit hash name
