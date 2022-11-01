@@ -6,13 +6,7 @@ const fs = require('fs').promises;
 const telegram = require('./telegram.js');
 
 const DEFAULT_DESKTOP_VIEWPOINT_RATIO = [
-  { width: 540, height: 405 },
-  { width: 600, height: 450 },
-  { width: 720, height: 540 },
-  { width: 960, height: 720 },
-  { width: 1140, height: 640 },
-  { width: 1280, height: 720 },
-  { width: 1920, height: 1080 },
+  { width: 1140, height: 640 }
 ];
 
 const DEFAULT_TYPE = 'jpeg';
@@ -52,6 +46,7 @@ async function run() {
 
     // "networkidle0" as default puppeteer default waitUntil option
     let waitUntil = core.getInput('waitUntil') || DEFAULT_WAITUNTIL_OPTION;
+    let popupClass = core.getInput('popupClass') || false;
     if (!WAITUNTIL_OPTIONS.includes(waitUntil)) {
       waitUntil = DEFAULT_WAITUNTIL_OPTION;
     }
@@ -115,6 +110,21 @@ async function run() {
       core.startGroup('start process desktop');
       console.log('Processing desktop screenshot');
       await desktopPage.goto(url, { waitUntil });
+      if (popupClass) {
+        let div_selector_to_remove= popupClass;
+        await page.evaluate((sel) => {
+            var elements = document.querySelectorAll(sel);
+            for(var i=0; i< elements.length; i++){
+                elements[i].parentNode.removeChild(elements[i]);
+            }
+            document.querySelectorAll('iframe').forEach( item =>
+              var elements = item.contentWindow.document.querySelectorAll(sel);
+              for(var i=0; i< elements.length; i++){
+                  elements[i].parentNode.removeChild(elements[i]);
+              }
+            )
+        }, div_selector_to_remove)
+      }
       for (const { width, height } of DEFAULT_DESKTOP_VIEWPOINT_RATIO) {
         // filename with/without post fix commit hash name
         const desktopPath = noCommitHashFileName
