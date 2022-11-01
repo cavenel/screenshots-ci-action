@@ -31,6 +31,10 @@ inputs:
     required: false
     description: "When to consider navigation succeeded, defaults to 'networkidle0'."
     default: 'networkidle0'
+  popupClass:
+    required: false
+    description: "Class of popup to be removed from screenshot"
+    default: false
 runs:
   using: 'node16'
   main: "dist/index.js"
