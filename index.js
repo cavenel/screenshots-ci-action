@@ -116,9 +116,15 @@ async function run() {
             elements[i].parentNode.removeChild(elements[i]);
           }
           document.querySelectorAll('iframe').forEach((item) => {
-            let elements = item.contentWindow.document.querySelectorAll(sel);
-            for (var i = 0; i < elements.length; i++) {
-              elements[i].parentNode.removeChild(elements[i]);
+            try {
+              let elements = item.contentWindow.document.querySelectorAll(sel);
+              for (var i = 0; i < elements.length; i++) {
+                elements[i].parentNode.removeChild(elements[i]);
+              }
+            } catch (error) {
+              console.error(error);
+              // expected output: ReferenceError: nonExistentFunction is not defined
+              // Note - error messages will vary depending on browser
             }
           });
         }, div_selector_to_remove);
