@@ -27,6 +27,26 @@ const WAITUNTIL_OPTIONS = [
 
 let browser;
 
+async function autoScroll(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      var totalHeight = 0;
+      var distance = 100;
+      var timer = setInterval(() => {
+        var scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= scrollHeight - window.innerHeight) {
+          clearInterval(timer);
+          window.scrollTo(0, 0);
+          resolve();
+        }
+      }, 100);
+    });
+  });
+}
+
 async function run() {
   try {
     const url = core.getInput('url') || '';
@@ -136,6 +156,7 @@ async function run() {
           : `${PATH}desktopPage${width}x${height}-${POST_FIX}.${screenshotType}`;
 
         await desktopPage.setViewport({ width, height });
+        await autoScroll(desktopPage);
         await desktopPage.screenshot({
           path: desktopPath,
           fullPage,
