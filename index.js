@@ -128,6 +128,7 @@ async function run() {
       core.startGroup('start process desktop');
       console.log('Processing desktop screenshot');
       await desktopPage.goto(url, { waitUntil });
+      document.getElementsByClassName('wp-block-template-part')[0].style.position = "absolute";
       if (popupClass) {
         let div_selector_to_remove = popupClass;
         await desktopPage.evaluate((sel) => {
@@ -135,7 +136,6 @@ async function run() {
           for (var i = 0; i < elements.length; i++) {
             elements[i].parentNode.removeChild(elements[i]);
           }
-          document.getElementsByClassName('wp-block-template-part')[0].style.position = "absolute";
           document.querySelectorAll('iframe').forEach((item) => {
             try {
               let elements = item.contentWindow.document.querySelectorAll(sel);
