@@ -40,7 +40,7 @@ async function autoScroll(page) {
         if (totalHeight >= scrollHeight - window.innerHeight) {
           clearInterval(timer);
           window.scrollTo(0, 0);
-          resolve();
+          setTimeout(() => {resolve();},300);
         }
       }, 100);
     });
@@ -135,6 +135,7 @@ async function run() {
           for (var i = 0; i < elements.length; i++) {
             elements[i].parentNode.removeChild(elements[i]);
           }
+          document.getElementsByClassName('wp-block-template-part')[0].style.position = "absolute";
           document.querySelectorAll('iframe').forEach((item) => {
             try {
               let elements = item.contentWindow.document.querySelectorAll(sel);
