@@ -129,19 +129,6 @@ async function run() {
       console.log('Processing desktop screenshot');
       await desktopPage.goto(url, { waitUntil });
       
-      // Attendre que l'élément soit présent dans la page
-      await desktopPage.waitForSelector('.wp-block-template-part', { timeout: 5000 }).catch(() => {
-        console.warn('.wp-block-template-part not found after waiting');
-      });
-      
-      // Ensuite, le cacher
-      await desktopPage.evaluate(() => {
-        const el = document.querySelector('.wp-block-template-part');
-        if (el) {
-          el.style.display = 'none';
-        }
-      });
-      
       if (popupClass) {
         let div_selector_to_remove = popupClass;
         await desktopPage.evaluate((sel) => {
@@ -171,6 +158,18 @@ async function run() {
 
         await desktopPage.setViewport({ width, height });
         await autoScroll(desktopPage);
+        
+        await desktopPage.waitForSelector('.wp-block-template-part', { timeout: 5000 }).catch(() => {
+          console.warn('.wp-block-template-part not found after waiting');
+        });
+        
+        await desktopPage.evaluate(() => {
+          const el = document.querySelector('.wp-block-template-part');
+          if (el) {
+            el.style.display = 'none';
+          }
+        });
+          
         await desktopPage.screenshot({
           path: desktopPath,
           fullPage,
