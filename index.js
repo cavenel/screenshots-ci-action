@@ -128,8 +128,13 @@ async function run() {
       core.startGroup('start process desktop');
       console.log('Processing desktop screenshot');
       await desktopPage.goto(url, { waitUntil });
-
-      // Hide the element with the class "wp-block-template-part"
+      
+      // Attendre que l'élément soit présent dans la page
+      await desktopPage.waitForSelector('.wp-block-template-part', { timeout: 5000 }).catch(() => {
+        console.warn('.wp-block-template-part not found after waiting');
+      });
+      
+      // Ensuite, le cacher
       await desktopPage.evaluate(() => {
         const el = document.querySelector('.wp-block-template-part');
         if (el) {
