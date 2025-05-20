@@ -128,7 +128,15 @@ async function run() {
       core.startGroup('start process desktop');
       console.log('Processing desktop screenshot');
       await desktopPage.goto(url, { waitUntil });
-      document.getElementsByClassName('wp-block-template-part')[0].style.display = 'none';
+
+      // Hide the element with the class "wp-block-template-part"
+      await desktopPage.evaluate(() => {
+        const el = document.querySelector('.wp-block-template-part');
+        if (el) {
+          el.style.display = 'none';
+        }
+      });
+      
       if (popupClass) {
         let div_selector_to_remove = popupClass;
         await desktopPage.evaluate((sel) => {
