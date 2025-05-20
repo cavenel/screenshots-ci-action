@@ -40,7 +40,9 @@ async function autoScroll(page) {
         if (totalHeight >= scrollHeight - window.innerHeight) {
           clearInterval(timer);
           window.scrollTo(0, 0);
-          setTimeout(() => {resolve();},300);
+          setTimeout(() => {
+            resolve();
+          }, 300);
         }
       }, 100);
     });
@@ -128,7 +130,7 @@ async function run() {
       core.startGroup('start process desktop');
       console.log('Processing desktop screenshot');
       await desktopPage.goto(url, { waitUntil });
-      
+
       if (popupClass) {
         let div_selector_to_remove = popupClass;
         await desktopPage.evaluate((sel) => {
@@ -158,18 +160,20 @@ async function run() {
 
         await desktopPage.setViewport({ width, height });
         await autoScroll(desktopPage);
-        
-        await desktopPage.waitForSelector('.wp-block-template-part', { timeout: 5000 }).catch(() => {
-          console.warn('.wp-block-template-part not found after waiting');
-        });
-        
+
+        await desktopPage
+          .waitForSelector('.wp-block-template-part', { timeout: 5000 })
+          .catch(() => {
+            console.warn('.wp-block-template-part not found after waiting');
+          });
+
         await desktopPage.evaluate(() => {
           const el = document.querySelector('.wp-block-template-part');
           if (el) {
             el.style.display = 'none';
           }
         });
-          
+
         await desktopPage.screenshot({
           path: desktopPath,
           fullPage,
