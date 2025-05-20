@@ -174,6 +174,19 @@ async function run() {
           }
         });
 
+        await desktopPage
+          .waitForSelector('.brave_popupSections__wrap', { timeout: 5000 })
+          .catch(() => {
+            console.warn('.brave_popupSections__wrap not found after waiting');
+          });
+
+        await desktopPage.evaluate(() => {
+          const el = document.querySelector('.brave_popupSections__wrap');
+          if (el) {
+            el.style.display = 'none';
+          }
+        });
+
         await desktopPage.screenshot({
           path: desktopPath,
           fullPage,
